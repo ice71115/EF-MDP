@@ -7,7 +7,7 @@ import math
 Transitions = {}
 Cohort = {}
 Reward = {}
-c=[2,3,6,3,2.5]
+c=[6,3,2,3,2.5]
 #user_act=1 #0:sleep 1:watch TV
 sensor_number=[1,1,1,1,1]
 r=1-0.9 #1-r:0,0.1,0.2,0.3
@@ -15,9 +15,9 @@ d=0.1
 if len(sys.argv)>2:
     r = 1- float(sys.argv[2])
 r=round(r, 1) 
-num_iteration=20
+num_iteration=30
 reliable=True#True:method B ; False : method A
-all_sensor_on=True
+all_sensor_on=False
 save_results=False
 all_sensor_number=np.sum(sensor_number)
 #gamma is the discount factor
@@ -96,8 +96,7 @@ def read_MDP():
 				m1[0]=0.8*(1-d)
 				m1[2]=1-0.8*(1-d)
 			elif ptr_state[i]==2:
-				m1[1]=0.8*(1-d)
-				m1[2]=1-0.8*(1-d)
+				m1[2]=1
 			else:
 				m1[2]=1
 		U=[set({'sleep'}),set({'-sleep'}),set({'sleep','-sleep'})]
@@ -447,7 +446,7 @@ def env(state,action,real_sensor):
 	pick_sensor=1
 	turn_on_off_sensor=False
 	if all_sensor_on:
-		next_state="(1 1 1 1 1)"
+		next_state="(0 1 0 1 1)"
 	else:
 		if "Turn" in action:
 			pick_sensor=int(action[-1])
@@ -524,8 +523,7 @@ def cal_belief(curr_state):
 		m1[0]=0.8*(1-d)
 		m1[2]=1-0.8*(1-d)
 	elif curr_state[0*2+1]=='2':
-		m1[1]=0.8*(1-d)
-		m1[2]=1-0.8*(1-d)
+		m1[2]=1
 	else:
 		m1[2]=1
 	U=[set({'sleep'}),set({'-sleep'}),set({'sleep','-sleep'})]
@@ -731,6 +729,7 @@ def update_Cohort_Table(Cohort):
 	# print('Recall_Sleep:',Recall_S)
 	#call value iteration
 def train():
+	d=0
 	curr_state=set_init_state()
 	Accuracy_list=[]
 	Energy_list=[]
@@ -887,6 +886,7 @@ def train():
 		Energy_list.append(round(Energy,4))
 	return Accuracy_list,Energy_list
 if __name__ == '__main__':
+	d=0
 	if save_results:
 		init_Cohort=copy.deepcopy(Cohort)
 		import openpyxl
