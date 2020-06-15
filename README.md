@@ -9,6 +9,7 @@ Line 18:方法B與方法A切換，True:方法B False:方法A
 執行指令python mdp_Cohort_4.py 0.9 0.7
 
 第一個參數:0.9是 MDP衰減率
+
 第二個參數:0.7 是Sensor的r值
 
 ontology:
