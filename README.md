@@ -18,6 +18,24 @@ ontology:
 
 轉移機率更新頻率 : 86400秒更新一次
 
+CASE1: 能耗
+
+sClock sLight sBed sCard sTV
+
+  6       3     2     3   2.5
+  
+CASE2: 能耗
+
+sClock sLight sBed sCard sTV
+
+  6       3     6     3   2.5
+  
+CASE3: 能耗
+
+sClock sLight sBed sCard sTV
+
+  2       3     6     3   2.5
+
 
 Case1結果:
 
