@@ -15,8 +15,8 @@ d=0.1
 if len(sys.argv)>2:
     r = 1- float(sys.argv[2])
 r=round(r, 1) 
-num_iteration=30
 reliable=True#True:method B ; False : method A
+num_iteration=30
 all_sensor_on=False
 save_results=False
 all_sensor_number=np.sum(sensor_number)
