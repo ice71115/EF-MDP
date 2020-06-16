@@ -39,19 +39,13 @@ sClock sLight sBed sCard sTV
 
 Case1結果:
 
-![image](https://github.com/ice71115/MDP/blob/master/Results/case1/0.7.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case1/0.8.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case1/0.9.png)
+![image](https://github.com/ice71115/MDP/blob/master/Results/case1/Case1.png)
 
 Case2結果:
 
-![image](https://github.com/ice71115/MDP/blob/master/Results/case2/0.7.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case2/0.8.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case2/0.9.png)
+![image](https://github.com/ice71115/MDP/blob/master/Results/case2/Case2.png)
 
 Case3結果:
 
-![image](https://github.com/ice71115/MDP/blob/master/Results/case3/0.7.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case3/0.8.png)
-![image](https://github.com/ice71115/MDP/blob/master/Results/case3/0.9.png)
+![image](https://github.com/ice71115/MDP/blob/master/Results/case3/Case3.png)
 
