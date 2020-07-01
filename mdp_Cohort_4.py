@@ -15,10 +15,10 @@ d=0.1
 if len(sys.argv)>2:
     r = 1- float(sys.argv[2])
 r=round(r, 1) 
-reliable=True#True:method B ; False : method A
 num_iteration=30
+reliable=False#True:method B ; False : method A
 all_sensor_on=False
-save_results=False
+save_results=True
 all_sensor_number=np.sum(sensor_number)
 #gamma is the discount factor
 if len(sys.argv)>1:
@@ -174,6 +174,11 @@ def read_MDP():
 		#state_error*=2
 		#w1=0.5
 		#w2=1-w1
+
+
+		if ptr_state==[0,1,0,1,0]or ptr_state==[0,1,2,1,0] or ptr_state==[0,1,0,1,2] or ptr_state==[0,1,2,1,2] or ptr_state==[2,1,0,1,0]or ptr_state==[2,1,2,1,0]or ptr_state==[2,1,0,1,2]or ptr_state==[2,1,2,1,2]:
+			belief_sleep=0
+			belief_wTV=0
 		belief=0
 		o_sensor=[]
 		wTV_LB=0.4
@@ -247,14 +252,15 @@ def read_MDP():
 		#Reward[p_state]=(state_error)*(1/(1+math.exp(-(belief*20-10))))
 		Reward[p_state]=(Wer*state_error+belief*(1-Wer)) if belief!=0 else 0
 		#print(Reward[p_state])
-		Reward["(0 1 0 1 0)"]=0
-		Reward["(0 1 2 1 0)"]=0
-		Reward["(0 1 0 1 2)"]=0
-		Reward["(0 1 2 1 2)"]=0
-		Reward["(2 1 2 1 0)"]=0
-		Reward["(2 1 0 1 2)"]=0
-		Reward["(2 1 2 1 2)"]=0
-		Reward["(2 1 0 1 0)"]=0
+		# Reward["(0 1 0 1 0)"]=0
+
+		# Reward["(0 1 2 1 0)"]=0
+		# Reward["(0 1 0 1 2)"]=0
+		# Reward["(0 1 2 1 2)"]=0
+		# Reward["(2 1 2 1 0)"]=0
+		# Reward["(2 1 0 1 2)"]=0
+		# Reward["(2 1 2 1 2)"]=0
+		# Reward["(2 1 0 1 0)"]=0
 
 
 
@@ -805,7 +811,7 @@ def train():
 					else:
 						pWaS+=1
 						#print(label)
-
+						#print(curr_state)
 				else:
 					#print("sleep")
 					count+=1
@@ -816,7 +822,7 @@ def train():
 					else:
 						pSaW+=1
 						#print(label)
-				#print(curr_state)
+						#print(curr_state)
 			
 			en=0
 			tag=0
