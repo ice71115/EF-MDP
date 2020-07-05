@@ -7,6 +7,7 @@ import math
 Transitions = {}
 Cohort = {}
 Reward = {}
+cal_belief={}
 c=[6,3,2,3,2.5]
 #user_act=1 #0:sleep 1:watch TV
 sensor_number=[1,1,1,1,1]
@@ -16,9 +17,9 @@ if len(sys.argv)>2:
     r = 1- float(sys.argv[2])
 r=round(r, 1) 
 num_iteration=30
-reliable=False#True:method B ; False : method A
+reliable=True#True:method B ; False : method A
 all_sensor_on=False
-save_results=True
+save_results=False
 all_sensor_number=np.sum(sensor_number)
 #gamma is the discount factor
 if len(sys.argv)>1:
@@ -174,11 +175,22 @@ def read_MDP():
 		#state_error*=2
 		#w1=0.5
 		#w2=1-w1
+		belief_m=False
+		for i in range(len(ptr_state)):
+			if  ptr_state[i]==1 and (i!=1 and i!=3):
+				break
 
+		else:
+			
+			if ptr_state[1]==1 or ptr_state[3]==1:
 
-		if ptr_state==[0,1,0,1,0]or ptr_state==[0,1,2,1,0] or ptr_state==[0,1,0,1,2] or ptr_state==[0,1,2,1,2] or ptr_state==[2,1,0,1,0]or ptr_state==[2,1,2,1,0]or ptr_state==[2,1,0,1,2]or ptr_state==[2,1,2,1,2]:
-			belief_sleep=0
-			belief_wTV=0
+					belief_m=True
+
+			if belief_m:
+			#print(ptr_state)
+				belief_sleep=0
+				belief_wTV=0
+				belief=0
 		belief=0
 		o_sensor=[]
 		wTV_LB=0.4
@@ -192,23 +204,61 @@ def read_MDP():
 			# else:
 				# (belief-sleep_LB)/(UB-sleep_LB)
 			o_sensor=[0,1,2,3]
+
 		elif(belief_sleep<belief_wTV ):
 			belief=belief_wTV
 			if belief <wTV_LB:
 				belief =0
 			# else:
 				# (belief-wTV_LB)/(UB-wTV_LB)
-			o_sensor=[4,3,1]
+		
+			o_sensor=[1,3,4]
+
 		else:
 			belief=belief_sleep
 			if belief <min_LB:
 				belief =0
 			# else:
 				# (belief-min_LB)/(UB-min_LB)
-			o_sensor=[0,1,2,3,4]
+			o_sensor=[1,2,3,4]
 		if belief>UB:
 			belief=UB
-			
+
+		# for i in range(len(ptr_state)):
+			# if i in o_sensor and ptr_state[i]==0:
+				# break
+			# if not(i in o_sensor) and ptr_state[i]!=0:
+				# break
+		# else:
+			# print(ptr_state)
+			# o_sensor=[0,1,2,3,4]
+		
+		#print(act)
+		#state reward
+		#action_set=["keep"]
+
+		#choose Turn off sensor action
+		if belief >0:
+			#action_set.append("t_off")
+			tag=0
+			for t in range(5):
+				for i in range(sensor_number[t]):
+					if ptr_state[tag]!=0:
+						nor=ptr_state[:]
+						nor[tag]=0
+						p_act='Turn off Sensor'+str(tag+1)
+						act[p_act]=[(1,"("+" ".join(str(ele) for ele in nor)+")")]
+						Nact[p_act]=[[1,"("+" ".join(str(ele) for ele in nor)+")"]]
+					tag+=1
+		# for i in range(len(ptr_state)):
+			# if i in o_sensor and ptr_state[i]==0:
+				# break
+			# if not(i in o_sensor) and ptr_state[i]!=0:
+				# break
+		# else:
+			# if action_set==["keep"]:
+				# print(ptr_state)
+				# o_sensor=[0,1,2,3,4]
 		tag=0
 		for t in range(5):
 			for i in range(sensor_number[t]):
@@ -221,26 +271,10 @@ def read_MDP():
 					act[p_act]=[(0.5,"("+" ".join(str(ele) for ele in on)+")"),(0.5,"("+" ".join(str(ele) for ele in off)+")")]
 					Nact[p_act]=[[1,"("+" ".join(str(ele) for ele in on)+")"],[1,"("+" ".join(str(ele) for ele in off)+")"]]
 				tag+=1
-		#print(act)
-		#state reward
-		
-
-		#choose Turn off sensor action
-		if belief >0:
-			tag=0
-			for t in range(5):
-				for i in range(sensor_number[t]):
-					if ptr_state[tag]!=0:
-						nor=ptr_state[:]
-						nor[tag]=0
-						p_act='Turn off Sensor'+str(tag+1)
-						act[p_act]=[(1,"("+" ".join(str(ele) for ele in nor)+")")]
-						Nact[p_act]=[[1,"("+" ".join(str(ele) for ele in nor)+")"]]
-					tag+=1
-
 
 		#state reward
 		p_state="("+" ".join(str(ele) for ele in ptr_state)+")"
+		cal_belief[p_state]=(belief_sleep,belief_wTV)
 		#Reward[p_state]=((state_error*0.13)+(0.87*belief)) if state_error*belief!=0 else 0
 		Wer=0.2
 		#Reward[p_state]=(Wer*state_error+belief*(1-Wer))*state_error*belief
@@ -475,7 +509,7 @@ def env(state,action,real_sensor):
 	return next_state,turn_on_off_sensor
 	
 	
-def cal_belief(curr_state):
+def calc_belief(curr_state):
 		#print("Phase : "+str(t)+"  state : "+curr_state+"   action : "+pi[curr_state])
 	belief_sleep=0
 	belief_wTV=0
@@ -755,7 +789,7 @@ def train():
 		pSaS=0
 		pSaW=0
 		for	t in range(0,86400):
-			#print(curr_state)
+			
 			if t==0:
 				if not all_sensor_on:
 					Transitions=update_Cohort_Table(Cohort)
@@ -767,7 +801,7 @@ def train():
 			else:
 				action='keep'
 			#print(curr_state)
-			belief_sleep,belief_wTV=cal_belief(curr_state)
+			belief_sleep,belief_wTV=cal_belief[curr_state]
 			if reliable:
 
 				if curr_state!="(0 1 0 1 0)" and curr_state!="(0 1 2 1 0)" and curr_state!="(0 1 0 1 2)" and curr_state!="(0 1 2 1 2)"and curr_state!="(2 1 2 1 2)"and curr_state!="(2 1 0 1 0)"and curr_state!="(2 1 2 1 0)"and curr_state!="(2 1 0 1 2)":
@@ -781,8 +815,8 @@ def train():
 						else:
 							pWaS+=1
 							# print('===============')
-							# print(curr_state)
-							# print(label)
+							#print(curr_state)
+							#print(label)
 							# print(belief_sleep,belief_wTV)
 							# print(action)
 					elif(belief_sleep>0.4):
@@ -795,8 +829,8 @@ def train():
 						else:
 							pSaW+=1
 							# print('===============')
-							# print(curr_state)
-							# print(label)
+							#print(curr_state)
+							#print(label)
 							# print(belief_sleep,belief_wTV)
 							# print(action)
 
@@ -812,6 +846,8 @@ def train():
 						pWaS+=1
 						#print(label)
 						#print(curr_state)
+						#print(belief_wTV)
+						#print(action)
 				else:
 					#print("sleep")
 					count+=1
@@ -876,7 +912,7 @@ def train():
 			Recall_W=0
 			beta=1
 			F1_W=0
-
+		print(pSaS,pWaW)
 		print('F1-score_Sleep:',F1_S)
 		print('F1-score_W_TV:',F1_W)
 		print("Accuracy:",Accuracy)
