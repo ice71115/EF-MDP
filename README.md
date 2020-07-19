@@ -1,4 +1,10 @@
 
+系統程式:(整理中)
+
+EF-MDP:
+
+環境:WIN10 PYTHON3.7.4
+
 執行指令python EF-MDP.py parameter1 parameter2 parameter3
 
 parameter1:MDP衰減率，系統預設為0.5。
